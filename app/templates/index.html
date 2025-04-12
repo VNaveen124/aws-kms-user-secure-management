@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Auth with AWS KMS</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    input, button { padding: 10px; margin: 5px 0; width: 300px; }
+    .form-container { margin-bottom: 30px; }
+  </style>
+</head>
+<body>
+
+  <h1>🔐 Secure User Portal (AWS KMS)</h1>
+
+  <div class="form-container">
+    <h2>Register</h2>
+    <input type="text" id="reg-username" placeholder="Username"><br>
+    <input type="password" id="reg-password" placeholder="Password"><br>
+    <button onclick="register()">Register</button>
+    <p id="register-response"></p>
+  </div>
+
+  <div class="form-container">
+    <h2>Login</h2>
+    <input type="text" id="login-username" placeholder="Username"><br>
+    <input type="password" id="login-password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+    <p id="login-response"></p>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:5000';
+
+    async function register() {
+      const username = document.getElementById('reg-username').value;
+      const password = document.getElementById('reg-password').value;
+
+      const res = await fetch(`${API_BASE}/register`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password})
+      });
+
+      const data = await res.json();
+      document.getElementById('register-response').innerText = data.message || 'Error';
+    }
+
+    async function login() {
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+
+      const res = await fetch(`${API_BASE}/login`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password})
+      });
+
+      const data = await res.json();
+      document.getElementById('login-response').innerText = data.message || 'Error';
+    }
+  </script>
+
+</body>
+</html>
