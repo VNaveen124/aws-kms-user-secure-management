@@ -49,10 +49,10 @@ jobs:
 
             # Install dependencies
             pip install --upgrade pip
-            pip install -r app/requirements.txt
+            pip install -r aws-kms-user-secure-management/app/requirements.txt
 
             # Set environment and run Flask
-            export FLASK_APP=app/main.py  # <-- Modify this if path or file name is different
+            export FLASK_APP=aws-kms-user-secure-management/app/main.py  # <-- Modify this if path or file name is different
             export FLASK_RUN_PORT=5000
             export FLASK_RUN_HOST=0.0.0.0
 
