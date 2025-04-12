@@ -25,11 +25,33 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd /home/${{ secrets.EC2_USER }}/your-app-directory
+            # Set paths
+            APP_DIR="/home/${USER}/your-app-directory"
+            VENV_DIR="$APP_DIR/venv"
+
+            # Clone repo if it doesn't exist
+            if [ ! -d "$APP_DIR" ]; then
+              git clone https://github.com/VNaveen124/aws-kms-user-secure-management.git "$APP_DIR"
+            fi
+
+            cd "$APP_DIR"
             git pull origin main
-            source venv/bin/activate
+
+            # Install Python and pip if missing (Ubuntu)
+            if ! command -v python3 &> /dev/null; then
+              sudo apt update && sudo apt install -y python3 python3-venv python3-pip
+            fi
+
+            # Create virtual environment if it doesn't exist
+            if [ ! -d "$VENV_DIR" ]; then
+              python3 -m venv "$VENV_DIR"
+            fi
+
+            source "$VENV_DIR/bin/activate"
+            pip install --upgrade pip
             pip install -r app/requirements.txt
+
             export FLASK_APP=main.py
             pkill -f "flask run" || true
-            nohup venv/bin/flask run --host=0.0.0.0 --port=5000 > app.log 2>&1 &
+            nohup "$VENV_DIR/bin/flask" run --host=0.0.0.0 --port=5000 >> app.log 2>&1 &
           EOF
